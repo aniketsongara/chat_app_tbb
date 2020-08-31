@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app_tbb/const.dart';
 import 'package:chat_app_tbb/widget/full_photo.dart';
@@ -59,13 +59,17 @@ class ChatScreenState extends State<ChatScreen> {
   SharedPreferences prefs;
 
   File imageFile;
+  File videoFile;
   bool isLoading;
   bool isShowSticker;
   String imageUrl;
+  String videoUrl;
 
   final TextEditingController textEditingController = TextEditingController();
   final ScrollController listScrollController = ScrollController();
   final FocusNode focusNode = FocusNode();
+
+
 
   @override
   void initState() {
@@ -115,6 +119,17 @@ class ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  Future getVideo() async {
+    imageFile = await ImagePicker.pickVideo(source: ImageSource.gallery);
+
+    if (imageFile != null) {
+      setState(() {
+        isLoading = true;
+      });
+      uploadVideoFile();
+    }
+  }
+
   void getSticker() {
     // Hide keyboard when sticker appear
     focusNode.unfocus();
@@ -140,6 +155,24 @@ class ChatScreenState extends State<ChatScreen> {
       });
       Fluttertoast.showToast(msg: 'This file is not an image');
     });
+  }
+
+  Future uploadVideoFile() async {
+    try {
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      StorageReference ref = FirebaseStorage.instance.ref().child(fileName);
+      StorageUploadTask uploadTask = ref.putFile(videoFile, StorageMetadata(contentType: 'video/mp4'));
+
+    Uri downloadUrl = (await uploadTask.future).downloadUrl;
+
+    final String url = downloadUrl.toString();
+
+    print(url);
+
+    } catch (error) {
+    print(error);
+    }
+
   }
 
   void onSendMessage(String content, int type) {
@@ -237,7 +270,9 @@ class ChatScreenState extends State<ChatScreen> {
                       margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
                     )
                   // Sticker
-                  : Container(
+                  : document['type'] == 2
+          // Image
+              ? Container(
                       child: Image.asset(
                         'images/${document['content']}.gif',
                         width: 100.0,
@@ -245,7 +280,53 @@ class ChatScreenState extends State<ChatScreen> {
                         fit: BoxFit.cover,
                       ),
                       margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
+                    ) : Container(
+            child: FlatButton(
+              child: Material(
+                child: /*CachedNetworkImage(
+                  placeholder: (context, url) => Container(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(themeColor),
                     ),
+                    width: 200.0,
+                    height: 200.0,
+                    padding: EdgeInsets.all(70.0),
+                    decoration: BoxDecoration(
+                      color: greyColor2,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(8.0),
+                      ),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Material(
+                    child: Image.asset(
+                      'images/img_not_available.jpeg',
+                      width: 200.0,
+                      height: 200.0,
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(8.0),
+                    ),
+                    clipBehavior: Clip.hardEdge,
+                  ),
+                  imageUrl: document['content'],
+                  width: 200.0,
+                  height: 200.0,
+                  fit: BoxFit.cover,
+                )*/
+                Text('Video is here'),
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                clipBehavior: Clip.hardEdge,
+              ),
+              onPressed: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => FullPhoto(url: document['content'])));
+              },
+              padding: EdgeInsets.all(0),
+            ),
+            margin: EdgeInsets.only(bottom: isLastMessageRight(index) ? 20.0 : 10.0, right: 10.0),
+          ),
         ],
         mainAxisAlignment: MainAxisAlignment.end,
       );
@@ -543,7 +624,7 @@ class ChatScreenState extends State<ChatScreen> {
       child: Row(
         children: <Widget>[
           // Button send image
-          Material(
+         /* Material(
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 1.0),
               child: IconButton(
@@ -553,13 +634,24 @@ class ChatScreenState extends State<ChatScreen> {
               ),
             ),
             color: Colors.white,
-          ),
+          ),*/
           Material(
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 1.0),
               child: IconButton(
                 icon: Icon(Icons.face),
                 onPressed: getSticker,
+                color: primaryColor,
+              ),
+            ),
+            color: Colors.white,
+          ),
+          Material(
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 1.0),
+              child: IconButton(
+                icon: Icon(Icons.image),
+                onPressed: getImage,
                 color: primaryColor,
               ),
             ),
@@ -572,11 +664,23 @@ class ChatScreenState extends State<ChatScreen> {
               child: TextField(
                 style: TextStyle(color: primaryColor, fontSize: 15.0),
                 controller: textEditingController,
-                decoration: InputDecoration.collapsed(
+                decoration: InputDecoration(
                   hintText: 'Type your message...',
                   hintStyle: TextStyle(color: greyColor),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.mic),
+                    onPressed: getImage,
+                    color: primaryColor,
+                  ),
+                  prefixIcon: IconButton(
+                    icon: Icon(Icons.video_library),
+                    onPressed: getVideo,
+                    color: primaryColor,
+                  ),
                 ),
                 focusNode: focusNode,
+                textInputAction: TextInputAction.newline,
+                keyboardType: TextInputType.multiline,
               ),
             ),
           ),
