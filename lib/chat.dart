@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat_app_tbb/playvideo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,7 +13,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 class Chat extends StatelessWidget {
   final String peerId;
   final String peerAvatar;
@@ -120,9 +120,9 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   Future getVideo() async {
-    imageFile = await ImagePicker.pickVideo(source: ImageSource.gallery);
+    videoFile = await ImagePicker.pickVideo(source: ImageSource.gallery);
 
-    if (imageFile != null) {
+    if (videoFile != null) {
       setState(() {
         isLoading = true;
       });
@@ -158,21 +158,58 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   Future uploadVideoFile() async {
-    try {
-      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-      StorageReference ref = FirebaseStorage.instance.ref().child(fileName);
-      StorageUploadTask uploadTask = ref.putFile(videoFile, StorageMetadata(contentType: 'video/mp4'));
+   /* try {
+      String now = DateTime.now().millisecondsSinceEpoch.toString();
+      String storageId = (now + id);
+      String contentType = 'video/mp4';
+      StorageReference ref = FirebaseStorage.instance.ref().child("video").child(storageId);
+      StorageUploadTask uploadTask = ref.putFile(videoFile, StorageMetadata(contentType: contentType));
 
-    Uri downloadUrl = (await uploadTask.future).downloadUrl;
+      StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+      storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
+        videoUrl = downloadUrl;
+        setState(() {
+          isLoading = false;
+          onSendMessage(videoUrl, 3);
+        });
+      }, onError: (err) {
+        setState(() {
+          isLoading = false;
+        });
+        Fluttertoast.showToast(msg: 'This file is not an image');
+      });
 
-    final String url = downloadUrl.toString();
-
-    print(url);
 
     } catch (error) {
     print(error);
-    }
+    }*/
 
+      final DateTime now = DateTime.now();
+      final int millSeconds = now.millisecondsSinceEpoch;
+      final String storageId = (millSeconds.toString());
+
+      //final file =  await ImagePicker.pickVideo(source: ImageSource.gallery);
+
+      StorageReference ref = FirebaseStorage.instance.ref().child(storageId);
+      StorageUploadTask uploadTask = ref.putFile(videoFile, StorageMetadata(contentType: 'video/mp4'));
+ //     Uri downloadUrl = (await uploadTask.future).downloadUrl;
+      StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+      storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
+        videoUrl = downloadUrl;
+        setState(() {
+          isLoading = false;
+          onSendMessage(videoUrl, 3);
+        });
+      }, onError: (err) {
+        setState(() {
+          isLoading = false;
+        });
+        Fluttertoast.showToast(msg: 'This file is not an image');
+      });
+    /*String url = await ref.getDownloadURL();
+      print('Url is : $url');
+
+*/
   }
 
   void onSendMessage(String content, int type) {
@@ -315,13 +352,20 @@ class ChatScreenState extends State<ChatScreen> {
                   height: 200.0,
                   fit: BoxFit.cover,
                 )*/
-                Text('Video is here'),
+                Column(
+                  children: [
+                    Icon(Icons.video_library),
+
+                    Container(color: Colors.green,child: Text('Video'),
+                    padding: const EdgeInsets.all(10),)
+                  ],
+                ),
                 borderRadius: BorderRadius.all(Radius.circular(8.0)),
                 clipBehavior: Clip.hardEdge,
               ),
               onPressed: () {
                 Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => FullPhoto(url: document['content'])));
+                    context, MaterialPageRoute(builder: (context) => VideoPlayerScreen(document['content'])));
               },
               padding: EdgeInsets.all(0),
             ),
