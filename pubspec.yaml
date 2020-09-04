@@ -41,9 +41,12 @@ dependencies:
  # firebase_messaging: 6.0.13
   flutter_local_notifications: 1.4.0
   photo_view: ^0.5.0
-  zefyr: ^0.11.0
-  video_player:
-
+  video_player: ^0.10.12+2
+  permission_handler:
+  zefyr:
+    git:
+      url: git://github.com/aniketsongara/zefyr.git
+      path: packages/zefyr
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +62,17 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - images/img_not_available.jpeg
+    - images/mimi1.gif
+    - images/mimi2.gif
+    - images/mimi3.gif
+    - images/mimi4.gif
+    - images/mimi5.gif
+    - images/mimi6.gif
+    - images/mimi7.gif
+    - images/mimi8.gif
+    - images/mimi9.gif
 
   # To add assets to your application, add an assets section, like this:
   # assets:

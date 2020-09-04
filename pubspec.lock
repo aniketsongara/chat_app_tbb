@@ -8,6 +8,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.4.2"
+  audio_recorder:
+    dependency: transitive
+    description:
+      name: audio_recorder
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   boolean_selector:
     dependency: transitive
     description:
@@ -317,6 +324,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.9.0"
+  permission_handler:
+    dependency: "direct main"
+    description:
+      name: permission_handler
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.1+1"
+  permission_handler_platform_interface:
+    dependency: transitive
+    description:
+      name: permission_handler_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.1"
   photo_view:
     dependency: "direct main"
     description:
@@ -503,7 +524,7 @@ packages:
       name: url_launcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.5.0"
+    version: "5.5.2"
   url_launcher_linux:
     dependency: transitive
     description:
@@ -524,14 +545,14 @@ packages:
       name: url_launcher_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.7"
+    version: "1.0.8"
   url_launcher_web:
     dependency: transitive
     description:
       name: url_launcher_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.2"
+    version: "0.1.3+1"
   uuid:
     dependency: transitive
     description:
@@ -577,9 +598,11 @@ packages:
   zefyr:
     dependency: "direct main"
     description:
-      name: zefyr
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "packages/zefyr"
+      ref: HEAD
+      resolved-ref: "5c55631916319c947180ed5bc0f6b7d2d3cd738f"
+      url: "git://github.com/aniketsongara/zefyr.git"
+    source: git
     version: "0.11.0"
 sdks:
   dart: ">=2.9.0-14.0.dev <3.0.0"
