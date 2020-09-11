@@ -13,7 +13,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'editor.dart';
 
 class Chat extends StatelessWidget {
@@ -188,6 +187,8 @@ class ChatScreenState extends State<ChatScreen> {
       Fluttertoast.showToast(msg: 'This file is not an supported !');
     });
   }
+
+
 
   Future uploadVideoFile() async {
     final DateTime now = DateTime.now();
@@ -632,7 +633,12 @@ class ChatScreenState extends State<ChatScreen> {
       MaterialPageRoute(builder: (context) => EditorPage()),
     );
 
-    if(result!=null) uploadEditorFile(result);
+    if(result!=null) {
+      setState(() {
+        isLoading = true;
+      });
+      uploadEditorFile(result);
+    }
 
   }
 
