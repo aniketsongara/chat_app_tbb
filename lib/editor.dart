@@ -134,6 +134,7 @@ class EditorPageState extends State<EditorPage> {
     final file = File(Directory.systemTemp.path + "/quick_start.json");
     if (await file.exists()) {
       final contents = await file.readAsString();
+      print(NotusDocument.fromJson(jsonDecode(contents)));
       return NotusDocument.fromJson(jsonDecode(contents));
     }
     final Delta delta = Delta()..insert("Write here\n");
@@ -144,6 +145,7 @@ class EditorPageState extends State<EditorPage> {
     print('I am calling saved button !!!');
     // Notus documents can be easily serialized to JSON by passing to
     // `jsonEncode` directly
+    print('Controller of saved editor is : ${_controller.document}');
     final contents = jsonEncode(_controller.document);
     // For this example we save our document to a temporary file.
     final file = File(Directory.systemTemp.path + "/quick_start.json");

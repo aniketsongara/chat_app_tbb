@@ -5,6 +5,7 @@ import 'package:audio_recorder/audio_recorder.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+
 class AudioRecordingScreen extends StatefulWidget {
 
   @override
@@ -36,12 +37,9 @@ class AudioRecordingState extends State<AudioRecordingScreen> {
 
   Future<bool> checkPermission() async {
     print('Checking permissions.....');
-    if (!await Permission.microphone.isGranted &&
-        !await Permission.storage.isGranted) {
+    if (!await Permission.microphone.isGranted) {
       PermissionStatus statusMicrophone = await Permission.microphone.request();
-      PermissionStatus statusStorage = await Permission.storage.request();
-      if (statusMicrophone != PermissionStatus.granted &&
-          statusStorage != PermissionStatus.granted) {
+       if (statusMicrophone != PermissionStatus.granted) {
         return false;
       }
     }
