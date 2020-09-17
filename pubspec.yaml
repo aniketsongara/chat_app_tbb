@@ -44,6 +44,7 @@ dependencies:
   video_player: ^0.10.12+2
   permission_handler: ^5.0.1+1
   http: ^0.12.2
+  notustohtml: ^0.0.7
   zefyr:
     git:
       url: git://github.com/aniketsongara/zefyr.git

@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chat_app_tbb/playvideo.dart';
+import 'package:chat_app_tbb/images.dart';
+import 'package:chat_app_tbb/video.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:chat_app_tbb/playvideo.dart';
 import 'package:chat_app_tbb/const.dart';
 import 'package:chat_app_tbb/widget/full_photo.dart';
 import 'package:chat_app_tbb/widget/loading.dart';
@@ -13,7 +16,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zefyr/zefyr.dart';
+import 'audio.dart';
 import 'editor.dart';
+import 'package:http/http.dart' as http;
+import 'package:quill_delta/quill_delta.dart';
 
 class Chat extends StatelessWidget {
   final String peerId;
@@ -346,7 +353,7 @@ class ChatScreenState extends State<ChatScreen> {
                                   child: Center(child: Icon(Icons.video_library,size: 45,),),),
                                   Container(
                                     color: Colors.green,
-                                    child: Text('Video'),
+                                    child: Text('Video',style: TextStyle(color: Colors.white),),
                                     padding: const EdgeInsets.all(15),
                                   )
                                 ],
@@ -373,12 +380,12 @@ class ChatScreenState extends State<ChatScreen> {
               child: Material(
                 child: Column(
                   children: [
-                    Padding(padding: const EdgeInsets.all(13),
+                    Padding(padding: const EdgeInsets.all(10),
                       child: Center(child: Icon(Icons.chrome_reader_mode,size: 45,),),),
                     Container(
                       color: Colors.green,
-                      child: Text('File'),
-                      padding: const EdgeInsets.all(18),
+                      child: Text('File',style: TextStyle(color: Colors.white),),
+                      padding: const EdgeInsets.all(15),
                     )
                   ],
                 ),
@@ -386,6 +393,7 @@ class ChatScreenState extends State<ChatScreen> {
                 BorderRadius.all(Radius.circular(8.0)),
                 clipBehavior: Clip.hardEdge,
               ),
+              // editorView(document['content']),
               onPressed: () {
 
                 print('*************************${document['content']}****************************');
@@ -521,7 +529,7 @@ class ChatScreenState extends State<ChatScreen> {
                             child: Center(child: Icon(Icons.video_library,size: 45,),),),
                           Container(
                             color: Colors.green,
-                            child: Text('Video'),
+                            child: Text('Video',style: TextStyle(color: Colors.white)),
                             padding: const EdgeInsets.all(15),
                           )
                         ],
@@ -551,7 +559,7 @@ class ChatScreenState extends State<ChatScreen> {
                             child: Center(child: Icon(Icons.chrome_reader_mode,size: 42,),),),
                           Container(
                             color: Colors.green,
-                            child: Text('File'),
+                            child: Text('File',style: TextStyle(color: Colors.white)),
                             padding: const EdgeInsets.all(15),
                           )
                         ],
@@ -623,6 +631,33 @@ class ChatScreenState extends State<ChatScreen> {
       return false;
     }
   }
+
+
+ /*  Widget editorView(String fileUrl) {
+    final document = downloadFile(fileUrl);
+    return Container(
+      width: 400,
+      height: 400,
+      child: document!=null ? ZefyrView(document: _loadDocument(fileUrl),
+      imageDelegate: CustomImageDelegate(),
+      videoDelegate: CustomVideoDelegate(),
+      audioDelegate: CustomAudioDelegate(),) : CircularProgressIndicator() ,
+    );
+  }
+
+  NotusDocument _loadDocument(String url) {
+    final content = downloadFile(url);
+    return NotusDocument.fromJson(jsonDecode(content));//content is a variable i declared to retrieve the document from firebase.
+  }
+
+    downloadFile(String url) async {
+    final http.Response downloadData = await http.get(url);
+    print(NotusDocument.fromJson(jsonDecode(downloadData.body.replaceAll("â", "​"))));
+    return downloadData.body.replaceAll("â", "​");
+    //return NotusDocument.fromJson(jsonDecode(downloadData.body.replaceAll("â", "​")));
+
+  }*/
+
 
   _editorScreen(BuildContext context) async {
     // Navigator.push returns a Future that completes after calling
